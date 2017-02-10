@@ -1,0 +1,32 @@
+extends ../layout.pug
+block content
+    .container
+        .row
+            form.form-horizontal(method="post", action="/admin/movie/new")
+                .form-group
+                    label.col-sm-2.control-label(for="inputTitle") 电影名
+                    .col-sm-10
+                        input#inputTitle.form-control(type="text", name=movie[title], value=movie.title)
+                .form-group
+                    label.col-sm-2.control-label(for="inputTitle") 导演
+                    .col-sm-10
+                        input#inputDoctor.form-control(type="text", name=movie[doctor], value=movie.doctor)
+                .form-group
+                    label.col-sm-2.control-label(for="inputTitle") 国家
+                    .col-sm-10
+                        input#inputCountry.form-control(type="text", name=movie[title], value=movie.country)
+                .form-group
+                    label.col-sm-2.control-label(for="inputTitle") 语言
+                    .col-sm-10
+                        input#inputLanguage.form-control(type="text", name=movie[title], value=movie.language)
+                .form-group
+                    label.col-sm-2.control-label(for="inputTitle") 上映时间
+                    .col-sm-10
+                        input#inputYear.form-control(type="text", name=movie[title], value=movie.year)
+                .form-group
+                    label.col-sm-2.control-label(for="inputTitle") 简介
+                    .col-sm-10
+                        input#inputSummary.form-control(type="text", name=movie[title], value=movie.summary)
+                .form-group
+                    .col-sm-offset-2.col-sm-10
+                        button.btn.btn-default(type="submit") 录入
