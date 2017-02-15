@@ -10,6 +10,7 @@ const MovieSchema = new mongoose.Schema({
     country: String,
     flash: String,
     poster: String,
+    summary: String,
     year: Number,
     meta: {
         createAt: {
@@ -21,7 +22,7 @@ const MovieSchema = new mongoose.Schema({
             default: Date.now()
         }
     }
-})
+});
 
 MovieSchema.pre('save', function(next) {
     if (this.isNew) {
