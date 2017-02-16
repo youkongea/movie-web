@@ -15,9 +15,10 @@ const app = express();
 
 app.set('views', './views/pages');
 app.set('view engine', 'pug');
-app.use('/static', express.static(path.join(__dirname, 'bower_components')));
+app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.locals.moment = require('moment');
 app.listen(port);
 
 console.log('start');
@@ -124,4 +125,20 @@ app.get('/admin/list', function(req, res) {
             movies: movies
         })
     });
+});
+
+//list delete movie
+app.delete('/admin/list', function(req, res) {
+    "use strict";
+    const id = req.query.id;
+    if (id) {
+        Movie.remove({_id: id}, function(err, movie) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                res.json({success: 1});
+            }
+        })
+    }
 });
