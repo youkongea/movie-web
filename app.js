@@ -6,7 +6,8 @@ const express = require("express"),
     path = require('path'),
     bodyParser = require('body-parser'),
     mongoose = require('mongoose'),
-    Movie = require('./models/movie');
+    Movie = require('./models/movie'),
+    User = require('./models/user');
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/movie');
@@ -35,7 +36,44 @@ app.get('/', function(req, res) {
         })
     });
 });
-//detail page
+
+// signup
+app.post('/user/signup', function(req, res){
+    'use strict';
+    let _user = req.body.user;
+
+    User.findOne({name: _user.name}, function(err, user){
+        if (err) {
+            console.log(err);
+        }
+        if (user) {
+            return res.redirect('/');
+        }
+        else {
+           let user = new User(_user);
+            user.save(function(err, user) {
+                if (err) {
+                    console.log(err);
+                }
+                res.redirect('/admin/userlist');
+            })
+        }
+    });
+
+});
+//userlist page
+app.get('/admin/userlist', function(req, res) {
+    User.fetch(function (err, users) {
+        if (err) {
+            console.log(err);
+        }
+        res.render('userlist', {
+            title: '用户列表页',
+            users: users
+        })
+    });
+});
+// detail page
 app.get('/movie/:id', function(req, res) {
     const id = req.params.id;
     Movie.findById(id, function(err, movie) {
