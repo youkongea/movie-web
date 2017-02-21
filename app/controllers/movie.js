@@ -2,7 +2,9 @@
  * Created by unsad on 2017/2/20.
  */
 const Movie = require('../models/movie'),
-    Comment = require('../models/comment');
+    Comment = require('../models/comment'),
+    Category = require('../models/category');
+
 // detail page
 exports.detail = function (req, res) {
     const id = req.params.id;
@@ -10,6 +12,7 @@ exports.detail = function (req, res) {
         Comment
             .find({movie: id})
             .populate('from','name')
+            .populate('reply.from reply.to', 'name')
             .exec(function(err, comments) {
             res.render('detail', {
                 title: movie.title,
@@ -22,18 +25,12 @@ exports.detail = function (req, res) {
 
 //admin new page
 exports.new = function (req, res) {
-    res.render('admin', {
-        title: '后台录入页',
-        movie: {
-            title: '',
-            doctor: '',
-            country: '',
-            year: '',
-            poster: '',
-            flash: '',
-            summary: '',
-            language: ''
-        }
+    Category.find({}, function(err, categories) {
+        res.render('admin', {
+            title: '后台录入页',
+            categories: categories,
+            movie: {}
+        })
     })
 };
 // admin update movie
@@ -41,12 +38,12 @@ exports.update = function (req, res) {
     const id = req.params.id;
     if (id) {
         Movie.findById(id, function (err, movie) {
-            if (err) {
-                console.log(err);
-            }
-            res.render('admin', {
-                title: 'imooc 后台更新页',
-                movie: movie
+            Category.find({}, function(err, categories) {
+                res.render('admin', {
+                    title: 'imooc 后台更新页',
+                    movie: movie,
+                    categories: categories
+              });
             })
         })
     }
@@ -57,7 +54,7 @@ exports.save = function (req, res) {
         movieObj = req.body.movie,
         _movie;
 
-    if (id !== 'undefined') {
+    if (id) {
         Movie.findOneAndUpdate({_id: id}, movieObj, function (err, movie) {
             if (err) {
                 console.log(err);
@@ -66,22 +63,17 @@ exports.save = function (req, res) {
         });
     }
     else {
-        _movie = new Movie({
-            doctor: movieObj.doctor,
-            title: movieObj.title,
-            country: movieObj.country,
-            language: movieObj.language,
-            year: movieObj.year,
-            poster: movieObj.poster,
-            summary: movieObj.summary,
-            flash: movieObj.flash
-        });
+        _movie = new Movie(movieObj);
+        let categoryId = _movie.category;
         _movie.save(function (err, movie) {
             if (err) {
                 console.log(err);
             }
-            res.redirect('/movie/' + movie._id);
-        });
+            Category.findById(categoryId, function(err, category) {
+               category.movies.push(_movie._id);
+                res.redirect('/movie/' + movie._id);
+               })
+            });
     }
 };
 

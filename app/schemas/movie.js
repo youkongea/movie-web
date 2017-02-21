@@ -1,9 +1,11 @@
 /**
  * Created by unsad on 2017/2/13.
  */
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    ObjectId = Schema.Types.ObjectId;
 
-const MovieSchema = new mongoose.Schema({
+const MovieSchema = new Schema({
     doctor: String,
     title: String,
     language: String,
@@ -12,6 +14,10 @@ const MovieSchema = new mongoose.Schema({
     poster: String,
     summary: String,
     year: Number,
+    category: {
+        type: ObjectId,
+        ref: 'Category'
+    },
     meta: {
         createAt: {
             type: Date,
