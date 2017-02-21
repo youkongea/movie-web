@@ -3,7 +3,8 @@
  */
 const Index = require('../app/controllers/index'),
     User = require('../app/controllers/user'),
-    Movie = require('../app/controllers/movie');
+    Movie = require('../app/controllers/movie'),
+    Comment = require('../app/controllers/comment');
 
 module.exports = function(app) {
 //pre handle user
@@ -29,4 +30,7 @@ module.exports = function(app) {
     app.post('/admin/movie',User.signinRequired, User.adminRequired, Movie.save);
     app.get('/admin/movie/list',User.signinRequired, User.adminRequired, Movie.list);
     app.delete('/admin/movie/list',User.signinRequired, User.adminRequired, Movie.del);
+
+//comment
+    app.post('/user/comment', User.signinRequired, Comment.save);
 };

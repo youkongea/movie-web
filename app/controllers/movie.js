@@ -1,14 +1,21 @@
 /**
  * Created by unsad on 2017/2/20.
  */
-const Movie = require('../models/movie');
+const Movie = require('../models/movie'),
+    Comment = require('../models/comment');
 // detail page
 exports.detail = function (req, res) {
     const id = req.params.id;
     Movie.findById(id, function (err, movie) {
-        res.render('detail', {
-            title: 'imooc' + movie.title,
-            movie: movie
+        Comment
+            .find({movie: id})
+            .populate('from','name')
+            .exec(function(err, comments) {
+            res.render('detail', {
+                title: movie.title,
+                movie: movie,
+                comments: comments
+            })
         })
     })
 };
@@ -46,7 +53,6 @@ exports.update = function (req, res) {
 };
 //admin post movie
 exports.save = function (req, res) {
-    "use strict";
     let id = req.body.movie._id,
         movieObj = req.body.movie,
         _movie;
@@ -95,7 +101,6 @@ exports.list = function (req, res) {
 
 //list delete movie
 exports.del = function (req, res) {
-    "use strict";
     const id = req.query.id;
     if (id) {
         Movie.remove({_id: id}, function (err, movie) {
