@@ -14,6 +14,10 @@ const MovieSchema = new Schema({
     poster: String,
     summary: String,
     year: Number,
+    pv: {
+        type: Number,
+        default: 0
+    },
     category: {
         type: ObjectId,
         ref: 'Category'

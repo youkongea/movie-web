@@ -3,12 +3,20 @@
  */
 const Movie = require('../models/movie'),
     Comment = require('../models/comment'),
-    Category = require('../models/category');
+    Category = require('../models/category'),
+    fs = require('fs'),
+    path = require('path');
+
 
 // detail page
 exports.detail = function (req, res) {
     const id = req.params.id;
     Movie.findById(id, function (err, movie) {
+        Movie.update({_id: id}, {$inc: {pv: 1}}, function(err) {
+            if (err) {
+                console.log(err);
+            }
+        });
         Comment
             .find({movie: id})
             .populate('from','name')
@@ -48,12 +56,36 @@ exports.update = function (req, res) {
         })
     }
 };
+//admin poster
+exports.savePoster = function(req, res, next) {
+    let posterData = req.files.uploadPoster,
+        filePath = posterData.path,
+        originalFilename = posterData.originalFilename;
+
+    if (originalFilename) {
+        fs.readFile(filePath, function(err, data) {
+            let timestamp = Date.now(),
+                type = posterData.type.split('/')[1],
+                poster = timestamp + '.' + type,
+                newPath = path.join(_dirname, '../../', '/public/upload'+poster);
+
+                fs.writeFile(newPath, data, function(err) {
+                    req.poster = poster;
+                    next();
+                })
+        })
+    } else {
+        next();
+    }
+};
 //admin post movie
 exports.save = function (req, res) {
     let id = req.body.movie._id,
         movieObj = req.body.movie,
         _movie;
-
+    if (req.poster) {
+        movieObj.poster = req.poster;
+    }
     if (id) {
         Movie.findOneAndUpdate({_id: id}, movieObj, function (err, movie) {
             if (err) {
@@ -64,16 +96,34 @@ exports.save = function (req, res) {
     }
     else {
         _movie = new Movie(movieObj);
-        let categoryId = _movie.category;
+        let categoryId = movieObj.category,
+            categoryName = movieObj.categoryName;
+
         _movie.save(function (err, movie) {
             if (err) {
                 console.log(err);
             }
-            Category.findById(categoryId, function(err, category) {
-               category.movies.push(_movie._id);
-                res.redirect('/movie/' + movie._id);
-               })
-            });
+            if (categoryId) {
+                Category.findById(categoryId, function (err, category) {
+                    category.movies.push(movie._id);
+                    category.save(function(err, category) {
+                        res.redirect('/movie/' + movie._id);
+                    })
+                })
+            } else if (categoryName) {
+                let category = new Category({
+                    name: categoryName,
+                    movies: [movie._id]
+                });
+
+                category.save(function(err, category) {
+                    movie.category = category._id;
+                    movie.save(function(err, movie){
+                        res.redirect('/movie/' + movie._id);
+                    });
+                })
+            }
+        });
     }
 };
 

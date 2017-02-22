@@ -8,11 +8,32 @@ const express = require("express"),
     mongoose = require('mongoose'),
     session = require('express-session'),
     morgan = require('morgan'),
+    fs = require('fs'),
     mongoStore = require('connect-mongo')(session),
     dbUrl = 'mongodb://localhost:27017/movie';
 
 mongoose.Promise = global.Promise;
 mongoose.connect(dbUrl);
+
+//models loading
+let models_path = __dirname + '/app/models',
+    walk = function(path) {
+    fs.readdirSync(path)
+        .forEach(function(file) {
+            let newPath = path +'/' +file,
+                stat = fs.statSync(newPath);
+
+            if (stat.isFile()) {
+                if (/(.*)\.(js|coffee)/.test(file)) {
+                    require(newPath);
+                }
+            }
+            else if (stat.isDirectory()) {
+                walk(newPath);
+            }
+        })
+    };
+walk(models_path);
 
 const app = express();
 
@@ -21,6 +42,7 @@ app.set('view engine', 'pug');
 app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(require('connect-multiparty')());
 app.use(session({
     secret: 'movie',
     store: new mongoStore({
