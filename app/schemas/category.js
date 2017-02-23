@@ -1,9 +1,3 @@
-/**
- * Created by unsad on 2017/2/21.
- */
-/**
- * Created by unsad on 2017/2/13.
- */
 const mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     ObjectId = Schema.Types.ObjectId;

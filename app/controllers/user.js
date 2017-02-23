@@ -69,8 +69,6 @@ exports.signin = function (req, res) {
 // logout
 exports.logout = function (req, res) {
     delete req.session.user;
-    // delete app.locals.user;
-
     res.redirect('/');
 };
 //userlist page
@@ -85,7 +83,8 @@ exports.list = function (req, res) {
         })
     });
 };
-//midware for user
+
+//登录权限控制
 exports.signinRequired = function(req, res, next) {
     const user = req.session.user;
     if (!user) {
@@ -94,6 +93,7 @@ exports.signinRequired = function(req, res, next) {
     next();
 };
 
+//管理权限控制
 exports.adminRequired = function(req, res, next) {
     const user = req.session.user;
     if (user.role <= 10) {

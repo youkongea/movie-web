@@ -1,3 +1,4 @@
+// 评论类型处理
 $(function() {
     $('.comment').click(function(e) {
         const target = $(this),

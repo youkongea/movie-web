@@ -1,6 +1,7 @@
 /**
  * Created by unsad on 2017/2/16.
  */
+// 异步删除电影数据
 $(function() {
     "use strict";
     $('.del').click(function(e) {
@@ -20,7 +21,7 @@ $(function() {
                 }
             })
          });
-
+//  豆瓣API数据录入
     $('#douban').blur(function() {
         let douban = $(this),
             id = douban.val();

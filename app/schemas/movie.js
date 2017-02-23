@@ -20,7 +20,7 @@ const MovieSchema = new Schema({
     },
     category: {
         type: ObjectId,
-        ref: 'Category'
+        ref: 'Category' // 外键引用
     },
     meta: {
         createAt: {

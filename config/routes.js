@@ -8,7 +8,7 @@ const Index = require('../app/controllers/index'),
     Category = require('../app/controllers/category');
 
 module.exports = function(app) {
-//pre handle user
+// 预处理user
     app.use(function (req, res, next) {
         let _user = req.session.user;
         app.locals.user = _user;

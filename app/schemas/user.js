@@ -1,5 +1,5 @@
 const mongoose = require('mongoose'),
-    bcrypt = require('bcrypt-nodejs'),
+    bcrypt = require('bcrypt-nodejs'), // 密码加盐模块
     SALT_WORK_FACTOR = 10;
 
 const UserSchema = new mongoose.Schema({
@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
+// 前置数据存储中间件
 UserSchema.pre('save', function(next) {
     const user = this;
     if (this.isNew) {
@@ -34,6 +35,7 @@ UserSchema.pre('save', function(next) {
         this.meta.updateAt = Date.now()
     }
 
+    // 密码加盐
     bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt){
         if (err) {
             return next(err)
@@ -48,6 +50,7 @@ UserSchema.pre('save', function(next) {
     });
 });
 
+// 添加提出和查询静态方法
 UserSchema.statics = {
     fetch: function(cb) {
         return this
@@ -63,6 +66,7 @@ UserSchema.statics = {
     }
 };
 
+// 密码验证实例方法
 UserSchema.methods = {
     comparePassword: function(_password, cb) {
         bcrypt.compare(_password, this.password, function(err, isMatch){

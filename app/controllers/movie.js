@@ -12,6 +12,7 @@ const Movie = require('../models/movie'),
 exports.detail = function (req, res) {
     const id = req.params.id;
     Movie.findById(id, function (err, movie) {
+        // 点击统计
         Movie.update({_id: id}, {$inc: {pv: 1}}, function(err) {
             if (err) {
                 console.log(err);
@@ -48,7 +49,7 @@ exports.update = function (req, res) {
         Movie.findById(id, function (err, movie) {
             Category.find({}, function(err, categories) {
                 res.render('admin', {
-                    title: 'imooc 后台更新页',
+                    title: '后台更新页',
                     movie: movie,
                     categories: categories
               });
