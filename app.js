@@ -2,7 +2,7 @@
  * Created by unsad on 2017/2/9.
  */
 const express = require("express"),
-    port = process.env.PORT || 3000,
+    port = process.env.PORT || 8080,
     path = require('path'),
     bodyParser = require('body-parser'), // 解析http请求体的中间件
     mongoose = require('mongoose'),
@@ -69,5 +69,5 @@ require('./config/routes')(app);  // 路由配置引用
 app.locals.moment = require('moment'); //格式化日期
 app.listen(port);
 
-console.log('start at 3000');
+console.log('start at 8080');
 
