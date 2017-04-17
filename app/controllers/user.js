@@ -84,6 +84,13 @@ exports.list = function (req, res) {
     });
 };
 
+//admin page
+exports.admin = function(req, res) {
+    res.render('user_admin', {
+        title: '后台管理页'
+    })
+};
+
 //登录权限控制
 exports.signinRequired = function(req, res, next) {
     const user = req.session.user;

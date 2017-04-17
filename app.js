@@ -45,7 +45,7 @@ app.set('view engine', 'pug');
 app.use('/static', express.static(path.join(__dirname, 'public'))); // 静态资源托管
 app.use(bodyParser.urlencoded({extended: true})); // 解析表单数据
 app.use(bodyParser.json()); // 解析json格式数据
-app.use(require('connect-multiparty')());
+app.use(require('connect-multiparty')()); // 文件上传模块
 app.use(session({
     secret: 'movie',  // 计算hash
     store: new mongoStore({    // 设置存储方式，默认为内存
@@ -69,5 +69,5 @@ require('./config/routes')(app);  // 路由配置引用
 app.locals.moment = require('moment'); //格式化日期
 app.listen(port);
 
-console.log('start');
+console.log('start at 3000');
 
